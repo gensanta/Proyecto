@@ -351,7 +351,6 @@ public class SchemeUpdater {
 
                 // si es un doble codigo
                 if (bAux && i>0 ) {
-                    System.out.println("----------------->  es codigo doble:" + cad);
                     codigosDobles[0] = saCodigos[0];
                     codigosDobles[1] = saCodigos[1];
                     esCodigoDoble = true;
@@ -365,8 +364,6 @@ public class SchemeUpdater {
                 }
             }
 
-        } else {
-            // puede ser un codigo doble separado por una /
         }
 
         return resultado;

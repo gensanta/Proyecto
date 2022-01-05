@@ -32,8 +32,29 @@ public class SchemeUpdater {
     int iPosDoble = -1;
 
     static SchemeUpdater a = new SchemeUpdater();
+    private String cadena = "jdbc:postgresql://localhost:5432/postgres";
+    private String usuario = "postgres";
+    private String contraseña = "postgres";
 
     public static void main(String[] args) {
+        System.out.println(
+                "   _____  ______ __  __ ______ __  ___ ______    \r\n" +
+                        "  / ___/ / ____// / / // ____//  |/  // ____/    \r\n" +
+                        "  \\__ \\ / /    / /_/ // __/  / /|_/ // __/       \r\n" +
+                        " ___/ // /___ / __  // /___ / /  / // /___       \r\n" +
+                        "/____/ \\____//_/ /_//_____//_/  /_//_____/       \r\n" +
+                        "   __  __ ____   ____   ___   ______ ______ ____ \r\n" +
+                        "  / / / // __ \\ / __ \\ /   | /_  __// ____// __ \\\r\n" +
+                        " / / / // /_/ // / / // /| |  / /  / __/  / /_/ /\r\n" +
+                        "/ /_/ // ____// /_/ // ___ | / /  / /___ / _, _/ \r\n" +
+                        "\\____//_/    /_____//_/  |_|/_/  /_____//_/ |_|  \r\n" +
+                        "                                                 ");
+
+        if (args.length == 0) {
+            imprimeAyuda();
+            return;
+        }
+
 
         if (args.length > 0) {
             if (args[0].equals("?")) {
@@ -47,19 +68,19 @@ public class SchemeUpdater {
         if (args.length > 2) {
             a.imprimirPorSalidaStandard = (args[2].toUpperCase().equals("S"));
         }
+        // cadena de conexion
+        if (args.length > 3) {
+            a.cadena = args[3];
+        }
+        // usuario
+        if (args.length > 4) {
+            a.usuario = args[4];
+        }
+        // contraseña
+        if (args.length > 5) {
+            a.contraseña = args[5];
+        }
 
-        System.out.println(
-                "   _____  ______ __  __ ______ __  ___ ______    \r\n" +
-                        "  / ___/ / ____// / / // ____//  |/  // ____/    \r\n" +
-                        "  \\__ \\ / /    / /_/ // __/  / /|_/ // __/       \r\n" +
-                        " ___/ // /___ / __  // /___ / /  / // /___       \r\n" +
-                        "/____/ \\____//_/ /_//_____//_/  /_//_____/       \r\n" +
-                        "   __  __ ____   ____   ___   ______ ______ ____ \r\n" +
-                        "  / / / // __ \\ / __ \\ /   | /_  __// ____// __ \\\r\n" +
-                        " / / / // /_/ // / / // /| |  / /  / __/  / /_/ /\r\n" +
-                        "/ /_/ // ____// /_/ // ___ | / /  / /___ / _, _/ \r\n" +
-                        "\\____//_/    /_____//_/  |_|/_/  /_____//_/ |_|  \r\n" +
-                        "                                                 ");
         Connection con = a.conectarPSG();
 
         if (con != null) {
@@ -110,14 +131,14 @@ public class SchemeUpdater {
     private static void imprimeAyuda() {
         System.out.println("Parametros disponibles:");
         System.out.println("un parametro: ?             -> imprime ayuda");
-        System.out.println("              otro caracter -> delimitador del csv");
-        System.out.println("dos parametros: 1er parametro -> lo anterior");
-        System.out.println("				2do parametro -> nombre del fichero con ruta");
-        System.out.println("tres parametros: 1er parametro -> lo anterior");
-        System.out.println("                 2do parametro -> lo anterior");
-        System.out.println("                 3er parametro -> si = 'S', sacar por consola el fichero");
+        System.out.println("              otro caracter -> delimitador del csv (por defecto |)");
+        System.out.println("2do parametro -> nombre (solo nombre) del fichero con ruta (por defecto esquema.csv). Se guardará en la carpeta Documentos del usuario.");
+        System.out.println("3er parametro -> si = 'S', sacar por consola el fichero (por defecto, N).");
+        System.out.println("4o  parametro -> cadena de conexión (por defecto jdbc:postgresql://localhost:5432/postgres).");
+        System.out.println("5o  parametro -> usuario de bbdd    (por defecto postgres).");
+        System.out.println("6o  parametro -> contraseña         (por defecto postgres).");
 
-        System.out.println(" Si se invoca sin parametros, creara o actualizará el fichero esquema.csv en la carpeta Documentos del usuario actual, utilizando como token '|' y sin imprimir por consola el fichero.");
+        System.out.println(" Si se invoca sin parametros, creará o actualizará el fichero esquema.csv en la carpeta Documentos del usuario actual, utilizando como token '|' y sin imprimir por consola el fichero.");
     }
 
     private static void tratarFila(String v, FileWriter fw) throws IOException {
@@ -354,15 +375,13 @@ public class SchemeUpdater {
     /*******************************************************************************************/
 
     public Connection conectarPSG() {
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";
-        String password = "postgres";
+
         Connection con = null;
 
         try {
             Class.forName("org.postgresql.Driver");
 
-            con = DriverManager.getConnection(url, user, password);
+            con = DriverManager.getConnection(cadena, usuario, contraseña);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT VERSION()");
 

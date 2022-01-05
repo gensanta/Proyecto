@@ -247,12 +247,26 @@ public class SchemeUpdater {
 
 
     private void guardaDescripcionEnResultado(Map<String, String> resultado, Integer inf, Integer lin, Integer col,	String codAct, String desc) {
+        // si es un codigo doble
+        if (codAct.contains("/")) {
+            // guarda un registro por cada codigo
+            StringTokenizer st = new StringTokenizer(codAct,"/");
 
-        String registro = inf + tokenCSV + lin + tokenCSV + col + tokenCSV + codAct+ tokenCSV +desc + tokenCSV;
-        if (imprimirPorSalidaStandard) System.out.println(registro);
-        resultado.put(inf + adaptaCodigo(codAct) + lin+col, registro);
+            while (st.hasMoreTokens()) {
+                String s = st.nextToken();
+                imprimeRegistroIndividualDeDescripcion(resultado, inf, lin, col, s, desc);
+            }
+        } else {
+            // sino, guarda un solo registro
+            imprimeRegistroIndividualDeDescripcion(resultado, inf, lin, col, codAct, desc);
+        }
     }
 
+    private void imprimeRegistroIndividualDeDescripcion(Map<String, String> resultado, Integer inf, Integer lin, Integer col, String codAct, String desc) {
+        String registro = inf + tokenCSV + lin + tokenCSV + col + tokenCSV + codAct + tokenCSV + desc + tokenCSV;
+        if (imprimirPorSalidaStandard) System.out.println(registro);
+        resultado.put(inf + adaptaCodigo(codAct) + lin + col, registro);
+    }
 
 
     private String adaptaCodigo(String codAct) {
